@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # ── Base de datos PostgreSQL ──────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: cleansenso_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cleansenso
+      POSTGRES_USER: cleansenso_user
+      POSTGRES_PASSWORD: cleansenso_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cleansenso_user -d cleansenso"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend Node.js / Express ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: cleansenso_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://cleansenso_user:cleansenso_pass@postgres:5432/cleansenso
+      JWT_SECRET: cleansenso_jwt_secret_local_2026
+      PORT: 4000
+      NODE_ENV: development
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+
+  # ── Frontend Next.js ──────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../
+      dockerfile: Dockerfile.frontend
+    container_name: cleansenso_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

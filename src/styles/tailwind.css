@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #0ea5e9;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #475569;
+  --accent: #f97316;
+  --accent-foreground: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #94a3b8;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #0ea5e9;
+  --radius: 0.5rem;
+  --font-sans: var(--font-plus-jakarta-sans), sans-serif;
+
+  --status-draft-bg: #f8fafc;
+  --status-draft-text: #64748b;
+  --status-draft-border: #cbd5e1;
+  --status-sent-bg: #eff6ff;
+  --status-sent-text: #2563eb;
+  --status-sent-border: #bfdbfe;
+  --status-accepted-bg: #f0fdf4;
+  --status-accepted-text: #16a34a;
+  --status-accepted-border: #bbf7d0;
+  --status-rejected-bg: #fff1f2;
+  --status-rejected-text: #e11d48;
+  --status-rejected-border: #fecdd3;
+  --status-expired-bg: #fffbeb;
+  --status-expired-text: #d97706;
+  --status-expired-border: #fde68a;
+  --status-active-bg: #f0fdf4;
+  --status-active-text: #16a34a;
+  --status-active-border: #bbf7d0;
+  --status-inactive-bg: #f8fafc;
+  --status-inactive-text: #64748b;
+  --status-inactive-border: #cbd5e1;
+  --status-prospect-bg: #faf5ff;
+  --status-prospect-text: #7c3aed;
+  --status-prospect-border: #ddd6fe;
+  --status-scheduled-bg: #eff6ff;
+  --status-scheduled-text: #2563eb;
+  --status-scheduled-border: #bfdbfe;
+  --status-confirmed-bg: #f0fdf4;
+  --status-confirmed-text: #16a34a;
+  --status-confirmed-border: #bbf7d0;
+  --status-inprogress-bg: #fff7ed;
+  --status-inprogress-text: #ea580c;
+  --status-inprogress-border: #fed7aa;
+  --status-completed-bg: #f0fdf4;
+  --status-completed-text: #15803d;
+  --status-completed-border: #86efac;
+  --status-cancelled-bg: #fff1f2;
+  --status-cancelled-text: #e11d48;
+  --status-cancelled-border: #fecdd3;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar-transition {
+    transition: width 300ms ease, transform 300ms ease;
+  }
+  .modal-enter {
+    animation: modalEnter 150ms ease forwards;
+  }
+  .fade-in {
+    animation: fadeIn 200ms ease forwards;
+  }
+  .row-delete {
+    animation: rowDelete 250ms ease forwards;
+  }
+  .slide-in-right {
+    animation: slideInRight 250ms ease forwards;
+  }
+  .pulse-highlight {
+    animation: pulseHighlight 600ms ease;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 2px;
+  }
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rowDelete {
+  from { opacity: 1; max-height: 60px; }
+  to { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulseHighlight {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: #fef9c3; }
+}
