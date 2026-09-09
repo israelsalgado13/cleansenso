@@ -14,7 +14,7 @@ import AppLogo from '@/components/ui/AppLogo';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   FileText, Users, CalendarDays, ChevronLeft, ChevronRight,
-  Settings, BarChart3, LogOut, Wrench, LayoutDashboard, User, GitBranch,
+  Settings, BarChart3, LogOut, Wrench, LayoutDashboard, User,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -79,13 +79,6 @@ const navItems: NavItem[] = [
     label: 'Configuración',
     href: '/settings',
     icon: <Settings size={18} />,
-    group: 'Administración',
-  },
-  {
-    id: 'nav-uml',
-    label: 'Diagramas UML',
-    href: '/uml-diagrams',
-    icon: <GitBranch size={18} />,
     group: 'Administración',
   },
 ];
