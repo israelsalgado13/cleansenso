@@ -25,6 +25,9 @@ export default function AppointmentDetailDrawer({
   onClose,
   serviceTypeColors,
 }: AppointmentDetailDrawerProps) {
+  // Guarda: si no hay cita seleccionada, no renderizar nada
+  if (!appointment) return null;
+
   // Obtiene el color del tipo de servicio, con fallback a gris
   const svcColor = serviceTypeColors[appointment.serviceType] ?? 'bg-slate-100 text-slate-700 border-slate-200';
 
