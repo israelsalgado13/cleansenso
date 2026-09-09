@@ -202,13 +202,18 @@ export default function DashboardPage() {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  // Saludo personalizado según la hora del día
-  const getGreeting = () => {
+  // Saludo personalizado según la hora del día — calculado en el cliente para evitar hydration mismatch
+  const [greeting, setGreeting] = useState('');
+  const [todayLabel, setTodayLabel] = useState('');
+
+  useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Buenos días';
-    if (hour < 18) return 'Buenas tardes';
-    return 'Buenas noches';
-  };
+    if (hour < 12) setGreeting('Buenos días');
+    else if (hour < 18) setGreeting('Buenas tardes');
+    else setGreeting('Buenas noches');
+
+    setTodayLabel(new Date().toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
 
   const userName = profile?.full_name?.split(' ')[0] || 'Usuario';
   const roleLabel = profile?.role === 'admin' ? 'Administrador' : profile?.role === 'supervisor' ? 'Supervisor' : 'Cliente';
@@ -216,14 +221,14 @@ export default function DashboardPage() {
   return (
     <AppLayout
       title="Dashboard"
-      subtitle={`— ${getGreeting()}, ${userName}`}
+      subtitle={greeting ? `— ${greeting}, ${userName}` : undefined}
     >
       {/* Bienvenida con rol del usuario */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-5 mb-6 flex items-center justify-between">
         <div>
-          <p className="text-sm font-600 text-primary">{getGreeting()}, {userName}</p>
+          <p className="text-sm font-600 text-primary">{greeting}, {userName}</p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Accediste como <span className="font-600 text-foreground">{roleLabel}</span> — {new Date().toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            Accediste como <span className="font-600 text-foreground">{roleLabel}</span>{todayLabel ? ` — ${todayLabel}` : ''}
           </p>
         </div>
         <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
