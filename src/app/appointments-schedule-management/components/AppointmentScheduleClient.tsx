@@ -430,7 +430,16 @@ export default function AppointmentScheduleClient() {
       />
 
       {detailAppt && (
-        <AppointmentDetailDrawer appointment={detailAppt} onClose={() => setDetailAppt(null)} serviceTypeColors={serviceTypeColors} />
+        <AppointmentDetailDrawer
+          appointment={detailAppt}
+          onClose={() => setDetailAppt(null)}
+          serviceTypeColors={serviceTypeColors}
+          onEdit={(appt) => {
+            setDetailAppt(null);
+            setEditAppt(appt);
+            setShowCreateModal(true);
+          }}
+        />
       )}
 
       <CreateAppointmentModal

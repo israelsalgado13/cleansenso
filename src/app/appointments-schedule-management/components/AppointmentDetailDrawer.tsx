@@ -18,12 +18,14 @@ interface AppointmentDetailDrawerProps {
   appointment: Appointment;                      // Cita a mostrar
   onClose: () => void;                           // Función para cerrar el panel
   serviceTypeColors: Record<string, string>;     // Mapa de colores por tipo de servicio
+  onEdit?: (appointment: Appointment) => void;   // Función para editar la cita
 }
 
 export default function AppointmentDetailDrawer({
   appointment,
   onClose,
   serviceTypeColors,
+  onEdit,
 }: AppointmentDetailDrawerProps) {
   // Guarda: si no hay cita seleccionada, no renderizar nada
   if (!appointment) return null;
@@ -140,7 +142,13 @@ export default function AppointmentDetailDrawer({
               <p className="text-xs font-600 uppercase tracking-wide text-muted-foreground">
                 Personal Asignado ({appointment.staffAssigned.length})
               </p>
-              <button className="text-xs font-600 text-primary hover:underline">
+              <button
+                onClick={() => {
+                  onClose();
+                  onEdit?.(appointment);
+                }}
+                className="text-xs font-600 text-primary hover:underline"
+              >
                 Reasignar
               </button>
             </div>
@@ -210,7 +218,13 @@ export default function AppointmentDetailDrawer({
             </button>
           )}
           {/* Botón editar cita */}
-          <button className="flex items-center gap-1.5 px-4 py-2 text-sm font-500 text-secondary-foreground bg-secondary border border-border rounded-md hover:bg-muted transition-colors ml-auto">
+          <button
+            onClick={() => {
+              onClose();
+              onEdit?.(appointment);
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-500 text-secondary-foreground bg-secondary border border-border rounded-md hover:bg-muted transition-colors ml-auto"
+          >
             <Edit2 size={14} />
             Editar Cita
           </button>
