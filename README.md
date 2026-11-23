@@ -43,7 +43,9 @@ Usuarios de demostración (solo desarrollo): `admin@cleansenso.pe` / `supervisor
 
 ### Modo nube (Supabase)
 
-Aplica las migraciones de `supabase/migrations/` en orden (`supabase db push`). La migración `20261119000000_security_hardening.sql` corrige políticas de seguridad: revisa su cabecera.
+Las migraciones de `supabase/migrations/` se aplican en orden. La migración `20261119000000_security_hardening.sql` corrige políticas de seguridad: revisa su cabecera.
+
+> ⚠️ **No ejecutes `supabase db push` contra un proyecto que ya tiene datos.** La migración inicial (`20260909193727_cleansenso_full_schema.sql`) empieza con `DROP TYPE ... CASCADE` y borraría datos si se reaplica. Si el historial de migraciones del proyecto está vacío, márcala primero como aplicada: `supabase migration repair --status applied 20260909193727`.
 
 ## Scripts
 
