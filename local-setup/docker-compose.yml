@@ -1,27 +1,32 @@
-version: '3.8'
+# Requiere local-setup/.env (copia de .env.example) con POSTGRES_PASSWORD y JWT_SECRET.
+# Si ya tenías el volumen postgres_data creado con otra contraseña, usa esa misma
+# o recrea el volumen: docker compose down -v
 
 services:
-  # ── Base de datos PostgreSQL ──────────────────────────────────────────────
+  # ── Base de datos PostgreSQL ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: cleansenso_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: cleansenso
-      POSTGRES_USER: cleansenso_user
-      POSTGRES_PASSWORD: cleansenso_pass
+      POSTGRES_DB: ${POSTGRES_DB:-cleansenso}
+      POSTGRES_USER: ${POSTGRES_USER:-cleansenso_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en local-setup/.env}
     ports:
-      - "5432:5432"
+      # Solo accesible desde tu propia máquina
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      # Los scripts se ejecutan en orden alfabético la primera vez que se crea la base
+      - ./init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./02_hardening.sql:/docker-entrypoint-initdb.d/02_hardening.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cleansenso_user -d cleansenso"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cleansenso_user} -d ${POSTGRES_DB:-cleansenso}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── Backend Node.js / Express ─────────────────────────────────────────────
+  # ── Backend Node.js / Express ───────────────────────────────────────────────────────
   backend:
     build:
       context: ../backend
@@ -29,12 +34,13 @@ services:
     container_name: cleansenso_backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://cleansenso_user:cleansenso_pass@postgres:5432/cleansenso
-      JWT_SECRET: cleansenso_jwt_secret_local_2026
+      DATABASE_URL: postgresql://${POSTGRES_USER:-cleansenso_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-cleansenso}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET (min. 32 caracteres) en local-setup/.env}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       PORT: 4000
       NODE_ENV: development
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,7 +48,7 @@ services:
       - ../backend:/app
       - /app/node_modules
 
-  # ── Frontend Next.js ──────────────────────────────────────────────────────
+  # ── Frontend Next.js ────────────────────────────────────────────────────────
   frontend:
     build:
       context: ../
